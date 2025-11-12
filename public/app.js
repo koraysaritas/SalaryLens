@@ -305,7 +305,7 @@
     if(!aligned) return;
     const { months, inflationPct, usdtry } = aligned;
     if(months.length === 0) return;
-    const S0 = Number(els.salary.value);
+  const S0 = getSalaryNumeric();
     if(!Number.isFinite(S0) || S0 <= 0) { showWarning('Please enter a positive Monthly Salary (TRY).'); return; }
 
     const startMonth = els.startMonth.value;
@@ -497,7 +497,7 @@
 
   function onExportCsv(){
     if(!aligned) { showWarning('Nothing to export. Validate & Calculate first.'); return; }
-    const S0 = Number(els.salary.value);
+    const S0 = getSalaryNumeric();
     if(!Number.isFinite(S0) || S0 <= 0) { showWarning('Please enter a positive Monthly Salary (TRY).'); return; }
     const whatIfMonth = clampWhatIfMonth(els.whatIfMonth.value || aligned.months[aligned.months.length-1]);
     const whatIfPct = Math.max(0, Math.min(200, Number(els.whatIfPct.value)));
@@ -523,8 +523,78 @@
     URL.revokeObjectURL(url);
   }
 
-  // Input listeners for instant updates
-  els.salary.addEventListener('input', debouncedUpdate);
+  // Salary input: assume Turkish locale (thousands '.' and decimal ',')
+  function getSalaryNumeric(){
+    const raw = els.salary.value;
+    if(!raw) return NaN;
+    // Remove spaces
+    let s = raw.replace(/\s+/g,'');
+    // Split on comma for decimal
+    const parts = s.split(',');
+    if(parts.length > 2) return NaN; // ambiguous
+    let intPart = parts[0].replace(/\./g,'').replace(/[^0-9]/g,''); // strip thousand separators and non-digits
+    let fracPart = parts[1] ? parts[1].replace(/[^0-9]/g,'').slice(0,2) : '';
+    if(!intPart) return NaN;
+    const numStr = fracPart ? intPart + '.' + fracPart : intPart;
+    return Number(numStr);
+  }
+  function formatSalaryInput(){
+    const num = getSalaryNumeric();
+    if(!Number.isFinite(num)) return; // leave as-is if invalid
+    // Determine entered decimal precision (up to 2)
+    const raw = els.salary.value;
+    const m = raw.match(/,(\d{1,2})$/);
+    const decs = m ? m[1].length : 0;
+    const nf = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decs, maximumFractionDigits: decs });
+    els.salary.value = nf.format(num);
+  }
+
+  // Live formatting while typing with stable caret (Turkish grouping)
+  let _fmtGuard = false;
+  function positionOfNthDigit(str, n){
+    if(n <= 0) return 0;
+    let count = 0;
+    for(let i=0;i<str.length;i++){
+      if(/\d/.test(str[i])){
+        count++;
+        if(count === n) return i+1; // caret after nth digit
+      }
+    }
+    return str.length;
+  }
+  function onSalaryInputLive(){
+    if(_fmtGuard) return;
+    _fmtGuard = true;
+    const el = els.salary;
+    const raw = String(el.value || '').replace(/\s+/g,'');
+    const caret = el.selectionStart ?? raw.length;
+    const commaIdx = raw.indexOf(',');
+    const inFrac = commaIdx >= 0 && caret > commaIdx;
+    const rawIntBeforeCaret = raw.slice(0, Math.min(caret, commaIdx >= 0 ? commaIdx : caret));
+    const nDigitsBefore = (rawIntBeforeCaret.match(/\d/g) || []).length;
+    // Clean pieces
+    const intDigits = (commaIdx >= 0 ? raw.slice(0, commaIdx) : raw).replace(/[^0-9]/g,'');
+    const fracDigitsRaw = commaIdx >= 0 ? raw.slice(commaIdx+1) : '';
+    const fracDigits = fracDigitsRaw.replace(/[^0-9]/g,'').slice(0,2);
+    // Format integer part with thousand separators '.'
+    const intFormatted = intDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const newVal = intFormatted + (commaIdx >= 0 ? ',' + fracDigits : '');
+    // Compute new caret
+    let newCaret;
+    if(inFrac){
+      const digitsInFracBefore = (raw.slice(commaIdx+1, caret).match(/\d/g) || []).length;
+      const newComma = intFormatted.length;
+      newCaret = newComma + 1 + Math.min(digitsInFracBefore, fracDigits.length);
+    } else {
+      newCaret = positionOfNthDigit(intFormatted, nDigitsBefore);
+    }
+    el.value = newVal;
+    try{ el.setSelectionRange(newCaret, newCaret); }catch{}
+    _fmtGuard = false;
+    debouncedUpdate();
+  }
+  els.salary.addEventListener('input', onSalaryInputLive);
+  els.salary.addEventListener('blur', ()=>{ formatSalaryInput(); debouncedUpdate(); });
   els.whatIfPct.addEventListener('input', debouncedUpdate);
   els.whatIfMonth.addEventListener('input', debouncedUpdate);
   els.startMonth.addEventListener('input', debouncedUpdate);
@@ -591,6 +661,8 @@
 
   // Restore last state and optionally auto-load samples for convenience
   restoreState();
+  // Format any restored salary value
+  if(els.salary.value) { try{ formatSalaryInput(); }catch{} }
   restoreInflationSource();
   // If inputs are empty, pre-populate from bundled data files (pretty-printed)
   (async function prepopulateFromData(){
