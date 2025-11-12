@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SalaryLens</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>SalaryLens</h1>
+    <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle between light and dark theme">🌗 Theme</button>
+  </header>
+
+  <section id="inputs" class="inputs-grid">
+    <div class="input-block">
+      <label for="inflationJsonText">Inflation JSON (paste)</label>
+      <textarea id="inflationJsonText" placeholder='{"series":[{"month":"2024-01","inflationPct":6.7}]}'></textarea>
+      <label class="file-label" for="inflationFile">or file:</label>
+      <input type="file" id="inflationFile" accept="application/json" />
+      <div class="inline-row" style="margin-top:8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--muted)">Inflation Source:</span>
+        <label><input type="radio" name="inflSource" id="inflSrcTUIK" value="TUIK" checked /> TUIK</label>
+        <label><input type="radio" name="inflSource" id="inflSrcENAG" value="ENAG" /> ENAG</label>
+        <label><input type="radio" name="inflSource" id="inflSrcAVG" value="AVG" /> Average (TUIK + ENAG)/2</label>
+      </div>
+    </div>
+    <div class="input-block">
+      <label for="usdtryJsonText">USD/TRY JSON (paste)</label>
+      <textarea id="usdtryJsonText" placeholder='{"series":[{"month":"2024-01","usdtry":29.8}]}'></textarea>
+      <label class="file-label" for="usdtryFile">or file:</label>
+      <input type="file" id="usdtryFile" accept="application/json" />
+    </div>
+    <div class="input-block">
+      <label for="salaryInput">Monthly Salary (TRY)</label>
+      <input type="number" id="salaryInput" min="0" step="0.01" />
+    </div>
+    <div class="input-block">
+      <label for="startMonthInput">Start Month of Last Raise</label>
+      <input type="month" id="startMonthInput" />
+    </div>
+    <div class="input-block">
+      <label for="whatIfMonthInput">What-If Raise Month</label>
+      <input type="month" id="whatIfMonthInput" />
+    </div>
+    <div class="input-block">
+      <label for="whatIfPctInput">What-If Raise %</label>
+      <input type="number" id="whatIfPctInput" min="0" max="200" step="0.1" value="0" />
+    </div>
+    <div class="buttons-block">
+      <button id="validateBtn">Validate &amp; Calculate</button>
+      <button id="resetBtn" type="button">Reset</button>
+      <button id="exportCsvBtn" type="button">Export CSV</button>
+    </div>
+  </section>
+
+  <section id="warnings" aria-live="polite" class="warnings" hidden></section>
+
+  <section id="summary" class="summary-cards">
+    <div class="card" id="card-totalInflation"><h3>Total Inflation Since Start</h3><p class="value">-</p></div>
+    <div class="card" id="card-requiredRaise"><h3>Required Raise Today</h3><p class="value">-</p></div>
+    <div class="card" id="card-usdSalary"><h3>Current USD Salary</h3><p class="value">-</p></div>
+    <div class="card" id="card-purchPower"><h3>Purchasing Power vs Base</h3><p class="value">-</p></div>
+  </section>
+
+  <section id="charts" class="charts">
+    <div class="chart-wrapper">
+      <canvas id="chartRequiredActual" aria-label="Required vs Actual Salary (TRY)" role="img"></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="chartReal" aria-label="Real Salary (TRY, base prices)" role="img"></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <canvas id="chartUsd" aria-label="Salary in USD" role="img"></canvas>
+    </div>
+  </section>
+
+  <section class="table-wrapper">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>MoM Inflation %</th>
+          <th>CPI Index</th>
+          <th>Cumulative Inflation %</th>
+          <th>Nominal Salary (TRY)</th>
+          <th>Required Salary (TRY)</th>
+          <th>Gap vs Required %</th>
+          <th>Real Salary (TRY)</th>
+          <th>USD/TRY</th>
+          <th>Salary (USD)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>SalaryLens &copy; 2025</p>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "TUIK": {
+    "source": "TUIK (official)",
+    "series": [
+      { "month": "2025-01", "inflationPct": 5.03 },
+      { "month": "2025-02", "inflationPct": 2.27 },
+      { "month": "2025-03", "inflationPct": 2.46 },
+      { "month": "2025-04", "inflationPct": 3.0 },
+      { "month": "2025-05", "inflationPct": 1.53 },
+      { "month": "2025-06", "inflationPct": 1.37 },
+      { "month": "2025-07", "inflationPct": 2.06 },
+      { "month": "2025-08", "inflationPct": 2.04 },
+      { "month": "2025-09", "inflationPct": 3.23 },
+      { "month": "2025-10", "inflationPct": 2.55 },
+      { "month": "2025-11", "inflationPct": 2.55 },
+      { "month": "2025-12", "inflationPct": 2.55 }
+    ]
+  },
+  "ENAG": {
+    "source": "ENAG (alternative)",
+    "series": [
+      { "month": "2025-01", "inflationPct": 8.22 },
+      { "month": "2025-02", "inflationPct": 3.37 },
+      { "month": "2025-03", "inflationPct": 3.91 },
+      { "month": "2025-04", "inflationPct": 3.46 },
+      { "month": "2025-05", "inflationPct": 3.66 },
+      { "month": "2025-06", "inflationPct": 3.05 },
+      { "month": "2025-07", "inflationPct": 3.75 },
+      { "month": "2025-08", "inflationPct": 3.23 },
+      { "month": "2025-09", "inflationPct": 3.79 },
+      { "month": "2025-10", "inflationPct": 3.74 },
+      { "month": "2025-11", "inflationPct": 3.74 },
+      { "month": "2025-12", "inflationPct": 3.74 }
+    ]
+  }
+}

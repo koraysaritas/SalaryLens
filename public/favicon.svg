@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    :root { color-scheme: light dark; }
+    .icon { fill: none; stroke: #0f172a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) {
+      .icon { stroke: #e8ebff; }
+    }
+  </style>
+  <!-- Drill-down / analysis motif: descending bars funneling into a downward arrow -->
+  <g class="icon">
+    <!-- Bars -->
+    <line x1="10" y1="16" x2="46" y2="16"/>
+    <line x1="10" y1="26" x2="40" y2="26"/>
+    <line x1="10" y1="36" x2="32" y2="36"/>
+    <!-- Downward arrow (drill down) -->
+    <path d="M46 16 L54 16 L54 44"/>
+    <polyline points="48,38 54,44 60,38"/>
+  </g>
+</svg>

@@ -1,0 +1,23 @@
+{
+  "name": "salarylens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal Node.js app serving a single static page to analyze salary vs inflation and FX.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js",
+    "pack:tar": "mkdir -p dist && tar -czf dist/salarylens-public.tgz -C public .",
+    "pack:zip": "mkdir -p dist && cd public && zip -qry ../dist/salarylens-public.zip .",
+    "deploy:gh-pages": "npx gh-pages -d public"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.0.0"
+  }
+}
