@@ -661,6 +661,9 @@
 
   // Restore last state and optionally auto-load samples for convenience
   restoreState();
+  // Set default months if not previously saved
+  if(!els.startMonth.value) els.startMonth.value = '2025-01';
+  if(!els.whatIfMonth.value) els.whatIfMonth.value = '2026-01';
   // Format any restored salary value
   if(els.salary.value) { try{ formatSalaryInput(); }catch{} }
   restoreInflationSource();

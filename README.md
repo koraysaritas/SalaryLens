@@ -2,6 +2,10 @@
 
 A tiny Node.js + Express static app to explore how your salary tracks inflation and FX — plus a quick “what‑if” raise simulator. No frameworks; just vanilla HTML/CSS/JS and Chart.js via CDN.
 
+Live app: https://koraysaritas.github.io/SalaryLens/
+
+![SalaryLens screenshot](docs/SalaryLens.png)
+
 ## 🚀 Run locally
 
 ```sh
