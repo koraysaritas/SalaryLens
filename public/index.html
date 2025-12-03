@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,10 +9,12 @@
   <link rel="stylesheet" href="./styles.css?v=1764781990953" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
   <header>
     <h1>SalaryLens</h1>
-    <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle between light and dark theme">🌗 Theme</button>
+    <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle between light and dark theme">🌗
+      Theme</button>
   </header>
 
   <section id="inputs" class="inputs-grid">
@@ -51,7 +54,6 @@
     </div>
     <div class="buttons-block">
       <button id="validateBtn">Validate &amp; Calculate</button>
-      <button id="resetBtn" type="button">Reset</button>
       <button id="exportCsvBtn" type="button">Export CSV</button>
     </div>
   </section>
@@ -59,10 +61,22 @@
   <section id="warnings" aria-live="polite" class="warnings" hidden></section>
 
   <section id="summary" class="summary-cards">
-    <div class="card" id="card-totalInflation"><h3>Total Inflation Since Start</h3><p class="value">-</p></div>
-    <div class="card" id="card-requiredRaise"><h3>Required Raise Today</h3><p class="value">-</p></div>
-    <div class="card" id="card-usdSalary"><h3>Current USD Salary</h3><p class="value">-</p></div>
-    <div class="card" id="card-purchPower"><h3>Purchasing Power vs Base</h3><p class="value">-</p></div>
+    <div class="card" id="card-totalInflation">
+      <h3>Total Inflation Since Start</h3>
+      <p class="value">-</p>
+    </div>
+    <div class="card" id="card-requiredRaise">
+      <h3>Required Raise Today</h3>
+      <p class="value">-</p>
+    </div>
+    <div class="card" id="card-usdSalary">
+      <h3>Current USD Salary</h3>
+      <p class="value">-</p>
+    </div>
+    <div class="card" id="card-purchPower">
+      <h3>Purchasing Power vs Base</h3>
+      <p class="value">-</p>
+    </div>
   </section>
 
   <section id="charts" class="charts">
@@ -103,4 +117,5 @@
 
   <script src="./app.js?v=1764781990953"></script>
 </body>
+
 </html>

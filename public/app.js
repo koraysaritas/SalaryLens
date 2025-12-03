@@ -19,7 +19,6 @@
     whatIfMonth: document.getElementById('whatIfMonthInput'),
     whatIfPct: document.getElementById('whatIfPctInput'),
     validateBtn: document.getElementById('validateBtn'),
-    resetBtn: document.getElementById('resetBtn'),
     exportCsvBtn: document.getElementById('exportCsvBtn'),
     themeToggle: document.getElementById('themeToggle'),
     warnings: document.getElementById('warnings'),
@@ -473,23 +472,7 @@
     }
   }
 
-  function onReset() {
-    els.inflationText.value = '';
-    els.usdtryText.value = '';
-    els.inflationFile.value = '';
-    els.usdtryFile.value = '';
-    els.salary.value = '';
-    els.startMonth.value = '';
-    els.whatIfMonth.value = '';
-    els.whatIfPct.value = 0;
-    charts.reqAct && charts.reqAct.destroy(); charts.reqAct = null;
-    charts.real && charts.real.destroy(); charts.real = null;
-    charts.usd && charts.usd.destroy(); charts.usd = null;
-    els.tableBody.innerHTML = '';
-    aligned = null;
-    clearWarnings();
-    persistState();
-  }
+
 
   function onExportCsv() {
     if (!aligned) { showWarning('Nothing to export. Validate & Calculate first.'); return; }
@@ -596,7 +579,6 @@
   els.startMonth.addEventListener('input', debouncedUpdate);
 
   els.validateBtn.addEventListener('click', onValidate);
-  els.resetBtn.addEventListener('click', onReset);
   els.exportCsvBtn.addEventListener('click', onExportCsv);
   els.themeToggle && els.themeToggle.addEventListener('click', () => setTheme(currentTheme === 'dark' ? 'light' : 'dark'));
   // If a file is selected, clear the related textarea to avoid ambiguity
