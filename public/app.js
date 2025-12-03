@@ -11,9 +11,7 @@
   // DOM refs
   const els = {
     inflationText: document.getElementById('inflationJsonText'),
-    inflationFile: document.getElementById('inflationFile'),
     usdtryText: document.getElementById('usdtryJsonText'),
-    usdtryFile: document.getElementById('usdtryFile'),
     salary: document.getElementById('salaryInput'),
     startMonth: document.getElementById('startMonthInput'),
     whatIfMonth: document.getElementById('whatIfMonthInput'),
@@ -54,14 +52,7 @@
     return arr;
   }
 
-  function readFileAsText(file) {
-    return new Promise((resolve, reject) => {
-      const fr = new FileReader();
-      fr.onerror = () => reject(fr.error);
-      fr.onload = () => resolve(String(fr.result || ''));
-      fr.readAsText(file);
-    });
-  }
+  // File reading is removed as uploads are no longer supported
 
   // Validation helpers
   function ensureContinuousAscending(months) {
@@ -430,11 +421,9 @@
   // Event wiring
   async function onValidate() {
     try {
-      // Prefer file if provided, else textarea
+      // Read from textareas only
       let inflText = els.inflationText.value;
       let usdText = els.usdtryText.value;
-      if (els.inflationFile.files && els.inflationFile.files[0]) inflText = await readFileAsText(els.inflationFile.files[0]);
-      if (els.usdtryFile.files && els.usdtryFile.files[0]) usdText = await readFileAsText(els.usdtryFile.files[0]);
       inflationSets = parseInflationCollections(inflText);
       // Determine active source
       const radioTUIK = document.getElementById('inflSrcTUIK');
@@ -581,19 +570,7 @@
   els.validateBtn.addEventListener('click', onValidate);
   els.exportCsvBtn.addEventListener('click', onExportCsv);
   els.themeToggle && els.themeToggle.addEventListener('click', () => setTheme(currentTheme === 'dark' ? 'light' : 'dark'));
-  // If a file is selected, clear the related textarea to avoid ambiguity
-  els.inflationFile.addEventListener('change', () => {
-    if (els.inflationFile.files && els.inflationFile.files.length > 0) {
-      els.inflationText.value = '';
-      persistState();
-    }
-  });
-  els.usdtryFile.addEventListener('change', () => {
-    if (els.usdtryFile.files && els.usdtryFile.files.length > 0) {
-      els.usdtryText.value = '';
-      persistState();
-    }
-  });
+  // File upload options removed; no change listeners needed
   // Inflation source change triggers re-alignment if already parsed
   ['inflSrcTUIK', 'inflSrcENAG', 'inflSrcAVG'].forEach(id => {
     const el = document.getElementById(id);
@@ -606,30 +583,15 @@
           const infl = inflationSets[activeInflationKey];
           if (!infl) return;
           if (aligned) {
-            // Re-align months with current FX set (need to re-parse USD from textarea to ensure in sync)
+            // Re-align months with current FX set using textarea values
             try {
-              let usdText = els.usdtryText.value;
-              if (els.usdtryFile.files && els.usdtryFile.files[0]) {
-                // re-read file (fresh) in case changed
-                const f = els.usdtryFile.files[0];
-                const fr = new FileReader();
-                fr.onload = () => {
-                  const fx = parseAndValidateUsdTry(String(fr.result || ''));
-                  const { months, inflationPct, usdtry, warning } = alignByCommonMonths(infl, fx);
-                  if (months.length === 0) { showWarning('No overlapping months after alignment.'); return; }
-                  aligned = { months, inflationPct, usdtry };
-                  if (warning) showWarning(warning); else clearWarnings();
-                  recomputeAndRender();
-                };
-                fr.readAsText(f);
-              } else {
-                const fx = parseAndValidateUsdTry(usdText);
-                const { months, inflationPct, usdtry, warning } = alignByCommonMonths(infl, fx);
-                if (months.length === 0) { showWarning('No overlapping months after alignment.'); return; }
-                aligned = { months, inflationPct, usdtry };
-                if (warning) showWarning(warning); else clearWarnings();
-                recomputeAndRender();
-              }
+              const usdText = els.usdtryText.value;
+              const fx = parseAndValidateUsdTry(usdText);
+              const { months, inflationPct, usdtry, warning } = alignByCommonMonths(infl, fx);
+              if (months.length === 0) { showWarning('No overlapping months after alignment.'); return; }
+              aligned = { months, inflationPct, usdtry };
+              if (warning) showWarning(warning); else clearWarnings();
+              recomputeAndRender();
             } catch (e) { showWarning(e.message || String(e)); }
           }
         }
@@ -715,12 +677,10 @@
       if (needInfl) tasks.push(fetch('./data/inflation.json').then(r => r.json()).then(j => { els.inflationText.value = JSON.stringify(j, null, 2); }));
       if (needUsd) tasks.push(fetch('./data/usdtry.json').then(r => r.json()).then(j => { els.usdtryText.value = JSON.stringify(j, null, 2); }));
       await Promise.all(tasks);
-
-      // Auto-validate if URL params provided salary
-      if (shouldAutoValidate) {
-        await onValidate();
-      } else if (!els.salary.value) {
-        // No salary from URL or localStorage - focus and hint
+      // Auto-validate so charts/table render on init with bundled data
+      await onValidate();
+      // If salary is still empty, focus the input for convenience
+      if (!els.salary.value) {
         els.salary.focus();
         els.salary.placeholder = 'Enter your monthly salary (e.g., 100.000)';
       }
