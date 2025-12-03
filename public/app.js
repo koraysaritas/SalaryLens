@@ -655,14 +655,74 @@
     }
   });
 
+  // Parse URL parameters
+  function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      salary: params.get('salary'),
+      startMonth: params.get('startMonth'),
+      whatIfMonth: params.get('whatIfMonth'),
+      whatIfPct: params.get('whatIfPct'),
+      source: params.get('source')
+    };
+  }
+
   // Restore last state and optionally auto-load samples for convenience
   restoreState();
+
+  // Check URL parameters (they override localStorage)
+  const urlParams = getUrlParams();
+  let shouldAutoValidate = false;
+
+  if (urlParams.salary) {
+    // URL param takes priority
+    const salaryNum = Number(urlParams.salary.replace(/[^0-9.]/g, ''));
+    if (Number.isFinite(salaryNum) && salaryNum > 0) {
+      els.salary.value = salaryNum.toString();
+      formatSalaryInput();
+      shouldAutoValidate = true;
+    }
+  }
+  if (urlParams.startMonth && isValidMonthStr(urlParams.startMonth)) {
+    els.startMonth.value = urlParams.startMonth;
+  }
+  if (urlParams.whatIfMonth && isValidMonthStr(urlParams.whatIfMonth)) {
+    els.whatIfMonth.value = urlParams.whatIfMonth;
+  }
+  if (urlParams.whatIfPct) {
+    const pct = Number(urlParams.whatIfPct);
+    if (Number.isFinite(pct)) {
+      els.whatIfPct.value = Math.max(0, Math.min(200, pct));
+    }
+  }
+
   // Set default months if not previously saved
   if (!els.startMonth.value) els.startMonth.value = '2025-01';
   if (!els.whatIfMonth.value) els.whatIfMonth.value = '2026-01';
+
   // Format any restored salary value
-  if (els.salary.value) { try { formatSalaryInput(); } catch { } }
+  if (els.salary.value && !urlParams.salary) { try { formatSalaryInput(); } catch { } }
+
   restoreInflationSource();
+
+  // Apply source from URL parameter (overrides localStorage)
+  if (urlParams.source) {
+    // Use locale-insensitive comparison to avoid Turkish I problem (i -> İ instead of I)
+    const source = urlParams.source.toLowerCase();
+    const radioTUIK = document.getElementById('inflSrcTUIK');
+    const radioENAG = document.getElementById('inflSrcENAG');
+    const radioAVG = document.getElementById('inflSrcAVG');
+
+    if (source === 'tuik' && radioTUIK) {
+      radioTUIK.checked = true;
+    } else if (source === 'enag' && radioENAG) {
+      radioENAG.checked = true;
+    } else if (source === 'avg' && radioAVG) {
+      radioAVG.checked = true;
+    }
+  }
+
+
   // If inputs are empty, pre-populate from bundled data files (pretty-printed)
   (async function prepopulateFromData() {
     try {
@@ -673,8 +733,18 @@
       if (needInfl) tasks.push(fetch('./data/inflation.json').then(r => r.json()).then(j => { els.inflationText.value = JSON.stringify(j, null, 2); }));
       if (needUsd) tasks.push(fetch('./data/usdtry.json').then(r => r.json()).then(j => { els.usdtryText.value = JSON.stringify(j, null, 2); }));
       await Promise.all(tasks);
+
+      // Auto-validate if URL params provided salary
+      if (shouldAutoValidate) {
+        await onValidate();
+      } else if (!els.salary.value) {
+        // No salary from URL or localStorage - focus and hint
+        els.salary.focus();
+        els.salary.placeholder = 'Enter your monthly salary (e.g., 100.000)';
+      }
     } catch (e) { console.warn('Prepopulate from data failed:', e); }
   })();
+
   restoreTheme();
 
   // Internal tiny tests (dev only)
