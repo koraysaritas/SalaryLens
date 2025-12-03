@@ -12,8 +12,8 @@
       { "month": "2025-08", "inflationPct": 2.04 },
       { "month": "2025-09", "inflationPct": 3.23 },
       { "month": "2025-10", "inflationPct": 2.55 },
-      { "month": "2025-11", "inflationPct": 2.55 },
-      { "month": "2025-12", "inflationPct": 2.55 }
+      { "month": "2025-11", "inflationPct": 0.87 },
+      { "month": "2025-12", "inflationPct": 0.87 }
     ]
   },
   "ENAG": {
@@ -29,8 +29,8 @@
       { "month": "2025-08", "inflationPct": 3.23 },
       { "month": "2025-09", "inflationPct": 3.79 },
       { "month": "2025-10", "inflationPct": 3.74 },
-      { "month": "2025-11", "inflationPct": 3.74 },
-      { "month": "2025-12", "inflationPct": 3.74 }
+      { "month": "2025-11", "inflationPct": 2.13 },
+      { "month": "2025-12", "inflationPct": 2.13 }
     ]
   }
 }
