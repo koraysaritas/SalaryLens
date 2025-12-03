@@ -674,8 +674,8 @@
       const needUsd = !els.usdtryText.value.trim();
       if (!needInfl && !needUsd) return;
       const tasks = [];
-      if (needInfl) tasks.push(fetch('./data/inflation.json').then(r => r.json()).then(j => { els.inflationText.value = JSON.stringify(j, null, 2); }));
-      if (needUsd) tasks.push(fetch('./data/usdtry.json').then(r => r.json()).then(j => { els.usdtryText.value = JSON.stringify(j, null, 2); }));
+      if (needInfl) tasks.push(fetch('./data/inflation.json', { cache: 'no-store' }).then(r => r.json()).then(j => { els.inflationText.value = JSON.stringify(j, null, 2); }));
+      if (needUsd) tasks.push(fetch('./data/usdtry.json', { cache: 'no-store' }).then(r => r.json()).then(j => { els.usdtryText.value = JSON.stringify(j, null, 2); }));
       await Promise.all(tasks);
       // Auto-validate so charts/table render on init with bundled data
       await onValidate();

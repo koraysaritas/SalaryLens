@@ -3,6 +3,8 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Always disable caching for all static assets
+const FORCE_NO_CACHE = true;
 
 // Health endpoint
 app.get('/healthz', (req, res) => {
@@ -17,6 +19,14 @@ app.use(express.static(publicDir, {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('X-XSS-Protection', '0');
+
+    if (FORCE_NO_CACHE) {
+      // Completely disable caching for all assets when toggled
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      return;
+    }
 
     // Cache-busting strategy:
     // - HTML files: no-cache (always revalidate)
