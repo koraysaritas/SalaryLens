@@ -32,11 +32,11 @@ footer{top:auto;bottom:0;font-size:12px;color:var(--muted);border-top:1px solid 
 .inputs-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;padding:16px}
 .input-block{grid-column:span 12;background:var(--panel);padding:12px;border-radius:10px}
 .input-block label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
-.input-block textarea{width:100%;min-height:100px;border:1px solid var(--table-border);background:#ffffff;color:var(--text);border-radius:8px;padding:8px}
+.input-block textarea{width:100%;min-height:100px;border:1px solid var(--table-border);background:var(--bg);color:var(--text);border-radius:8px;padding:8px}
 .input-block input[type="text"],
 .input-block input[type="number"],
 .input-block input[type="month"],
-.input-block input[type="file"]{width:100%;border:1px solid var(--table-border);background:#ffffff;color:var(--text);border-radius:8px;padding:8px}
+.input-block input[type="file"]{width:100%;border:1px solid var(--table-border);background:var(--bg);color:var(--text);border-radius:8px;padding:8px}
 .file-label{margin-top:8px}
 .buttons-block{grid-column:span 12;display:flex;gap:10px;align-items:center}
 .buttons-block button{background:var(--accent);color:#052e16;border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:600}
